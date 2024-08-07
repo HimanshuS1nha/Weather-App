@@ -1,15 +1,23 @@
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import tw from "twrnc";
+
+import SafeView from "@/components/SafeView";
+import { useEffect } from "react";
+import { router } from "expo-router";
 
 export default function Index() {
+  useEffect(() => {
+    const timeout = setTimeout(() => router.replace("/home"), 400);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <SafeView style={tw`justify-center items-center`}>
+      <Text style={tw`text-white`}>
+        Edit app/index.tsx to edit this screen.
+      </Text>
+    </SafeView>
   );
 }
