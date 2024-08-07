@@ -15,18 +15,21 @@ const SafeView = ({
   style?: StyleProp<ViewStyle>;
 }) => {
   return (
-    <SafeAreaView
-      style={[
-        {
-          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-          flex: 1,
-          backgroundColor: "#000",
-        },
-        style,
-      ]}
-    >
-      {children}
-    </SafeAreaView>
+    <>
+      <SafeAreaView
+        style={[
+          {
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+            flex: 1,
+            backgroundColor: "#000",
+          },
+          style,
+        ]}
+      >
+        {children}
+      </SafeAreaView>
+      <StatusBar barStyle={"light-content"} />
+    </>
   );
 };
 
