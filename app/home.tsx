@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "twrnc";
-import { Feather, Entypo } from "@expo/vector-icons";
+import { Feather, Entypo,FontAwesome5 } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -112,7 +112,7 @@ const Home = () => {
           onChangeText={handleChange}
         />
         <Pressable
-          style={tw`bg-purple-800 p-2 rounded-full`}
+          style={tw`bg-purple-900 p-2 rounded-full`}
           onPress={() => handleSearch()}
           disabled={isPending}
         >
@@ -173,7 +173,7 @@ const Home = () => {
               contentContainerStyle={tw``}
             >
               {weatherData?.forecastData?.map((data, i) => {
-                return <WeatherCard key={i} />;
+                return <WeatherCard key={i} data={data} />;
               })}
             </ScrollView>
           </View>
