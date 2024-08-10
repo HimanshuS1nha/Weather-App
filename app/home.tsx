@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "twrnc";
-import { Feather, Entypo,FontAwesome5 } from "@expo/vector-icons";
+import { Feather, Entypo, FontAwesome5 } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -48,7 +48,6 @@ const Home = () => {
     },
   });
   if (error) {
-    console.log(error);
     Alert.alert("Error", "Some error occured. Please try again later!");
   }
 
@@ -141,7 +140,16 @@ const Home = () => {
               </Text>
             </View>
 
-            <View style={tw`w-[80%] flex-row justify-between`}>
+            <View style={tw`w-[95%] flex-row justify-between`}>
+              <View style={tw`flex-row items-center gap-x-4`}>
+                <FontAwesome5 name="temperature-high" size={22} color="white" />
+                <View>
+                  <Text style={tw`font-medium text-white text-lg`}>
+                    {weatherData?.main.feels_like}%
+                  </Text>
+                  <Text style={tw`text-white text-xs`}>Feels Like</Text>
+                </View>
+              </View>
               <View style={tw`flex-row items-center gap-x-4`}>
                 <Entypo name="air" size={22} color="white" />
                 <View>
