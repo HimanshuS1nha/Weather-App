@@ -23,23 +23,32 @@ import type { WeatherType } from "@/types";
 const Home = () => {
   const [city, setCity] = useState(SecureStore.getItem("city") || "delhi");
   const [searchCity, setSearchCity] = useState("");
-  const [weatherData, setWeatherData] = useState<WeatherType | null>(null);
+  const [weatherData, setWeatherData] = useState<
+    (WeatherType & { forecastData: WeatherType[] }) | null
+  >(null);
 
   const handleChange = useCallback((value: string) => setSearchCity(value), []);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["get-weather"],
     queryFn: async () => {
-      const { data } = await axios.get(
+      const { data } = (await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city.toLowerCase()}&appid=${
           process.env.EXPO_PUBLIC_API_KEY
         }&units=metric`
-      );
+      )) as { data: WeatherType };
 
-      return data as WeatherType;
+      const { data: forecastData } = (await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city.toLowerCase()}&appid=${
+          process.env.EXPO_PUBLIC_API_KEY
+        }&units=metric`
+      )) as { data: { list: WeatherType[] } };
+
+      return { ...data, forecastData: forecastData.list.slice(0, 10) };
     },
   });
   if (error) {
+    console.log(error);
     Alert.alert("Error", "Some error occured. Please try again later!");
   }
 
@@ -53,13 +62,19 @@ const Home = () => {
 
       SecureStore.setItem("city", searchCity);
 
-      const { data } = await axios.get(
+      const { data } = (await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${searchCity.toLowerCase()}&appid=${
           process.env.EXPO_PUBLIC_API_KEY
         }&units=metric`
-      );
+      )) as { data: WeatherType };
 
-      return data as WeatherType;
+      const { data: forecastData } = (await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${searchCity.toLowerCase()}&appid=${
+          process.env.EXPO_PUBLIC_API_KEY
+        }&units=metric`
+      )) as { data: { list: WeatherType[] } };
+
+      return { ...data, forecastData: forecastData.list.slice(0, 10) };
     },
     onSuccess: (data) => {
       setWeatherData(data);
@@ -70,6 +85,16 @@ const Home = () => {
       Alert.alert("Error", error.message);
     },
   });
+
+  const parseImageUrl = useCallback(() => {
+    if (weatherData?.weather[0].icon.includes("d")) {
+      return `https://openweathermap.org/img/wn/${
+        weatherData?.weather[0].icon.split("d")[0]
+      }n@2x.png`;
+    } else {
+      return `https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`;
+    }
+  }, [weatherData]);
 
   useEffect(() => {
     if (data) {
@@ -102,9 +127,7 @@ const Home = () => {
           <View style={tw`gap-y-6 items-center`}>
             <Image
               source={{
-                uri: `https://openweathermap.org/img/wn/${
-                  weatherData?.weather[0].icon.split("d")[0]
-                }n@2x.png`,
+                uri: parseImageUrl(),
               }}
               style={tw`w-48 h-48`}
               resizeMode="stretch"
@@ -142,14 +165,14 @@ const Home = () => {
 
           <View style={tw`px-3 gap-y-5 mt-4`}>
             <Text style={tw`text-white text-xl font-semibold ml-1.5`}>
-              7 Day Forecast
+              Hourly Forecast
             </Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={tw``}
             >
-              {[1, 2, 3, 4, 5, 6, 7].map((_, i) => {
+              {weatherData?.forecastData?.map((data, i) => {
                 return <WeatherCard key={i} />;
               })}
             </ScrollView>
