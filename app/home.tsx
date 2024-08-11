@@ -122,6 +122,7 @@ const Home = () => {
           placeholderTextColor={"#d1d5db"}
           value={searchCity}
           onChangeText={handleChange}
+          onSubmitEditing={() => handleSearch()}
         />
         <Pressable
           style={tw`bg-blue-950 p-2 rounded-full`}
