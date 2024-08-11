@@ -33,15 +33,15 @@ const Home = () => {
     queryKey: ["get-weather"],
     queryFn: async () => {
       const { data } = (await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city.toLowerCase()}&appid=${
-          process.env.EXPO_PUBLIC_API_KEY
-        }&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?q=${city
+          .toLowerCase()
+          .trim()}&appid=${process.env.EXPO_PUBLIC_API_KEY}&units=metric`
       )) as { data: WeatherType };
 
       const { data: forecastData } = (await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city.toLowerCase()}&appid=${
-          process.env.EXPO_PUBLIC_API_KEY
-        }&units=metric`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city
+          .toLowerCase()
+          .trim()}&appid=${process.env.EXPO_PUBLIC_API_KEY}&units=metric`
       )) as { data: { list: WeatherType[] } };
 
       return { ...data, forecastData: forecastData.list.slice(0, 10) };
@@ -62,15 +62,15 @@ const Home = () => {
       SecureStore.setItem("city", searchCity);
 
       const { data } = (await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${searchCity.toLowerCase()}&appid=${
-          process.env.EXPO_PUBLIC_API_KEY
-        }&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?q=${searchCity
+          .toLowerCase()
+          .trim()}&appid=${process.env.EXPO_PUBLIC_API_KEY}&units=metric`
       )) as { data: WeatherType };
 
       const { data: forecastData } = (await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${searchCity.toLowerCase()}&appid=${
-          process.env.EXPO_PUBLIC_API_KEY
-        }&units=metric`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${searchCity
+          .toLowerCase()
+          .trim()}&appid=${process.env.EXPO_PUBLIC_API_KEY}&units=metric`
       )) as { data: { list: WeatherType[] } };
 
       return { ...data, forecastData: forecastData.list.slice(0, 10) };
@@ -86,12 +86,25 @@ const Home = () => {
   });
 
   const parseImageUrl = useCallback(() => {
-    if (weatherData?.weather[0].icon.includes("d")) {
-      return `https://openweathermap.org/img/wn/${
-        weatherData?.weather[0].icon.split("d")[0]
-      }n@2x.png`;
-    } else {
-      return `https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`;
+    const icon = weatherData?.weather[0].icon;
+    if (icon === "01d" || icon === "01n") {
+      return require("../assets/images/clear.png");
+    } else if (icon === "02d" || icon === "02n") {
+      return require("../assets/images/cloud.png");
+    } else if (icon === "03d" || icon === "03n") {
+      return require("../assets/images/cloud.png");
+    } else if (icon === "04d" || icon === "04n") {
+      return require("../assets/images/drizzle.png");
+    } else if (icon === "09d" || icon === "09n") {
+      return require("../assets/images/rain.png");
+    } else if (icon === "10d" || icon === "10n") {
+      return require("../assets/images/rain.png");
+    } else if (icon === "11d" || icon === "11n") {
+      return require("../assets/images/rain.png");
+    } else if (icon === "13d" || icon === "13n") {
+      return require("../assets/images/snow.png");
+    } else if (icon === "50d" || icon === "50n") {
+      return require("../assets/images/mist.png");
     }
   }, [weatherData]);
 
@@ -111,7 +124,7 @@ const Home = () => {
           onChangeText={handleChange}
         />
         <Pressable
-          style={tw`bg-purple-900 p-2 rounded-full`}
+          style={tw`bg-blue-950 p-2 rounded-full`}
           onPress={() => handleSearch()}
           disabled={isPending}
         >
@@ -125,9 +138,7 @@ const Home = () => {
         <>
           <View style={tw`gap-y-6 items-center`}>
             <Image
-              source={{
-                uri: parseImageUrl(),
-              }}
+              source={parseImageUrl()}
               style={tw`w-48 h-48`}
               resizeMode="stretch"
             />
@@ -140,7 +151,7 @@ const Home = () => {
               </Text>
             </View>
 
-            <View style={tw`w-[95%] flex-row justify-between`}>
+            <View style={tw`w-[93%] flex-row justify-between`}>
               <View style={tw`flex-row items-center gap-x-4`}>
                 <FontAwesome5 name="temperature-high" size={22} color="white" />
                 <View>
