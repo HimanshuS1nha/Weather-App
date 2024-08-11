@@ -2,6 +2,10 @@
 
 Stay ahead of the weather! Get real-time updates, detailed forecasts, and severe weather alerts. Experience accuracy and convenience right at your fingertips.
 
+## Screenshots
+
+![Weather App](https://github.com/user-attachments/assets/4cce3062-73db-4cc7-94a0-78ccdd82baca)
+
 ## Get started
 
 1. Get your API Key from https://openweathermap.org/
